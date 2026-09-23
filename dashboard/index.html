@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioPulse AI — ECG Arrhythmia Intelligence Dashboard</title>
+  <meta name="description" content="Real-time interactive deep learning ECG arrhythmia classification and heartbeat diagnostic monitor using MIT-BIH database.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation / Header -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="pulse-indicator">
+          <span class="pulse-ring"></span>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">CardioPulse <span class="ai-badge">AI 1D-CNN</span></h1>
+          <p class="brand-subtitle">MIT-BIH Arrhythmia Diagnostic Suite &amp; Beat Intelligence</p>
+        </div>
+      </div>
+
+      <div class="header-vitals">
+        <div class="vital-badge">
+          <span class="vital-label">MODEL</span>
+          <span class="vital-val" id="modelStatusVal">1D CNN</span>
+        </div>
+        <div class="vital-badge highlight">
+          <span class="vital-label">ACCURACY</span>
+          <span class="vital-val" id="modelAccuracyVal">98.46%</span>
+        </div>
+        <div class="vital-badge">
+          <span class="vital-label">TEST SAMPLES</span>
+          <span class="vital-val" id="testSamplesCount">21,892</span>
+        </div>
+        <button id="audioToggleBtn" class="btn-icon" title="Toggle Heartbeat Sound">
+          <svg id="audioIconOn" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="audioIconOff" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M23 9l-6 6"></path>
+          </svg>
+        </button>
+        <button id="exportReportBtn" class="btn-outline highlight" title="Export Printable Clinical Diagnostic Report">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Export Report
+        </button>
+        <button id="viewMetricsBtn" class="btn-outline">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          Benchmark Metrics
+        </button>
+      </div>
+    </header>
+
+    <!-- Quick Category Explorer Ribbon -->
+    <section class="category-ribbon">
+      <div class="ribbon-label">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="10 8 16 12 10 16 10 8"></polygon>
+        </svg>
+        Explore Beat Classes:
+      </div>
+      <div class="class-buttons" id="classButtonsContainer">
+        <button class="cat-pill active" data-class="0">
+          <span class="dot dot-normal"></span> Normal (N)
+        </button>
+        <button class="cat-pill" data-class="1">
+          <span class="dot dot-sveb"></span> Supraventricular (S)
+        </button>
+        <button class="cat-pill" data-class="2">
+          <span class="dot dot-veb"></span> Ventricular Ectopy (V)
+        </button>
+        <button class="cat-pill" data-class="3">
+          <span class="dot dot-fusion"></span> Fusion Beat (F)
+        </button>
+        <button class="cat-pill" data-class="4">
+          <span class="dot dot-unknown"></span> Unclassifiable (Q)
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Grid Dashboard -->
+    <main class="dashboard-grid">
+      <!-- Left Column: ECG Oscilloscope & Navigation -->
+      <section class="panel monitor-panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <div class="monitor-live-dot"></div>
+            <h2 class="panel-title">ECG Lead Oscilloscope Monitor</h2>
+            <span class="sample-tag" id="currentSampleTag">Sample #0</span>
+          </div>
+          <div class="monitor-controls">
+            <button id="togglePqstBtn" class="btn-ghost active" title="Toggle P-Q-R-S-T Wave Peak Detection Markers">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+              P-Q-R-S-T Peaks
+            </button>
+            <button id="toggleAnimBtn" class="btn-ghost" title="Toggle Sweep Line Animation">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              Sweep Sweep
+            </button>
+            <button id="openCustomModalBtn" class="btn-ghost">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Custom Signal
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Container with Medical Grid -->
+        <div class="ecg-canvas-wrapper" id="canvasWrapper">
+          <canvas id="ecgCanvas" width="900" height="340"></canvas>
+          <div class="canvas-overlay-hud">
+            <div class="hud-item">Lead: <strong>MLII (Modified Limb II)</strong></div>
+            <div class="hud-item">Sampling: <strong>125 Hz (187 points)</strong></div>
+            <div class="hud-item">Duration: <strong>~1.49 sec</strong></div>
+          </div>
+          <div id="canvasTooltip" class="canvas-tooltip hidden"></div>
+        </div>
+
+        <!-- Waveform Navigation & Selector Bar -->
+        <div class="navigation-toolbar">
+          <div class="nav-button-group">
+            <button id="prevBtn" class="btn-control" title="Previous Sample">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button id="nextBtn" class="btn-control" title="Next Sample">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+            <button id="randomBtn" class="btn-control highlight" title="Random Beat Sample">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+                <path d="M16 8h.01M8 8h.01M8 16h.01M16 16h.01M12 12h.01"></path>
+              </svg>
+              Random Beat
+            </button>
+          </div>
+
+          <div class="slider-group">
+            <label for="sampleSlider" class="slider-label">Sample Index:</label>
+            <input type="range" id="sampleSlider" min="0" max="21891" value="0" class="custom-range">
+            <div class="index-input-wrap">
+              <input type="number" id="sampleInput" min="0" max="21891" value="0" class="number-input">
+              <span class="max-label">/ 21,891</span>
+            </div>
+            <button id="loadBtn" class="btn-action">Load</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: AI Triage, Classification & Probabilities -->
+      <section class="panel diagnosis-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">AI Diagnostic Evaluation</h2>
+          <span class="latency-badge" id="latencyBadge">⚡ 12.4 ms</span>
+        </div>
+
+        <!-- Triage Status Banner -->
+        <div class="triage-card" id="triageCard">
+          <div class="triage-status-header">
+            <span class="triage-badge low" id="severityBadge">LOW RISK</span>
+            <span class="match-badge match" id="matchBadge">✓ GROUND TRUTH MATCH</span>
+          </div>
+
+          <div class="diagnosis-main">
+            <div class="diagnosis-name" id="diagnosisName">Normal Sinus Rhythm</div>
+            <div class="diagnosis-sub" id="diagnosisSub">Class 0 — Standard ventricular repolarization waveform</div>
+          </div>
+
+          <div class="confidence-meter-container">
+            <div class="confidence-header">
+              <span class="conf-title">Model Confidence</span>
+              <span class="conf-percent" id="confPercentVal">99.98%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="confProgressBar" style="width: 99.98%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ground Truth vs AI Prediction Comparison -->
+        <div class="comparison-row">
+          <div class="comp-box">
+            <div class="comp-lbl">CARDIOLOGIST TRUTH</div>
+            <div class="comp-val" id="trueLabelVal">0 · Normal (N)</div>
+          </div>
+          <div class="comp-arrow">➔</div>
+          <div class="comp-box">
+            <div class="comp-lbl">1D-CNN PREDICTION</div>
+            <div class="comp-val" id="predLabelVal">0 · Normal (N)</div>
+          </div>
+        </div>
+
+        <!-- Multi-Class Probability Distribution -->
+        <div class="probabilities-section">
+          <div class="section-title-wrap">
+            <h3 class="section-subtitle">Probability Distribution (Softmax Output)</h3>
+            <span class="section-note">5-Class Multi-label</span>
+          </div>
+
+          <div class="prob-list" id="probListContainer">
+            <!-- Dynamically populated bars -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Benchmark Metrics Modal -->
+    <div id="metricsModal" class="modal-backdrop hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">1D-CNN Benchmark Evaluation</h3>
+          <button id="closeMetricsBtn" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="metrics-summary-grid">
+            <div class="metric-card">
+              <div class="m-val highlight">98.46%</div>
+              <div class="m-lbl">Overall Accuracy</div>
+            </div>
+            <div class="metric-card">
+              <div class="m-val">98.42%</div>
+              <div class="m-lbl">Weighted Precision</div>
+            </div>
+            <div class="metric-card">
+              <div class="m-val">98.46%</div>
+              <div class="m-lbl">Weighted Recall</div>
+            </div>
+            <div class="metric-card">
+              <div class="m-val">98.43%</div>
+              <div class="m-lbl">Weighted F1-Score</div>
+            </div>
+          </div>
+
+          <div class="modal-section-title">Class Label Definitions &amp; Clinical Context</div>
+          <div class="classes-info-table">
+            <div class="class-info-row">
+              <span class="badge badge-normal">Class 0</span>
+              <strong>Normal (N)</strong>
+              <span>Normal sinus rhythm, bundle branch blocks</span>
+            </div>
+            <div class="class-info-row">
+              <span class="badge badge-sveb">Class 1</span>
+              <strong>Supraventricular Ectopy (S)</strong>
+              <span>Atrial premature, aberrated atrial premature, nodal</span>
+            </div>
+            <div class="class-info-row">
+              <span class="badge badge-veb">Class 2</span>
+              <strong>Ventricular Ectopy (V)</strong>
+              <span>Premature ventricular contraction (PVC), ventricular escape</span>
+            </div>
+            <div class="class-info-row">
+              <span class="badge badge-fusion">Class 3</span>
+              <strong>Fusion Beat (F)</strong>
+              <span>Fusion of ventricular and normal rhythm</span>
+            </div>
+            <div class="class-info-row">
+              <span class="badge badge-unknown">Class 4</span>
+              <strong>Unclassifiable (Q)</strong>
+              <span>Paced beats, cardiac assist or unclassifiable waveforms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Signal Input Modal -->
+    <div id="customModal" class="modal-backdrop hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">Test Custom 187-Point ECG Signal</h3>
+          <button id="closeCustomBtn" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="custom-note">Paste 187 comma-separated normalized ECG amplitudes (values between 0.0 and 1.0), or click "Generate Synthetic Waveform".</p>
+          <textarea id="customSignalTextarea" rows="6" placeholder="0.98, 0.95, 0.88, 0.72, 0.54, 0.32, 0.12, ..."></textarea>
+          <div class="modal-actions">
+            <button id="generateSyntheticBtn" class="btn-ghost">Generate Synthetic Beat</button>
+            <button id="evaluateCustomBtn" class="btn-action">Run 1D-CNN Inference</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clinical Diagnostic Report Modal (Print-Ready) -->
+    <div id="reportModal" class="modal-backdrop hidden">
+      <div class="modal-card report-card">
+        <div class="modal-header no-print">
+          <h3 class="modal-title">Clinical Diagnostic Summary</h3>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button id="printNowBtn" class="btn-action">🖨️ Print / Save PDF</button>
+            <button id="closeReportBtn" class="btn-close">&times;</button>
+          </div>
+        </div>
+        <div class="report-printable-area" id="reportPrintableArea">
+          <div class="report-header">
+            <div class="report-brand">
+              <h2>CARDIOPULSE AI MEDICAL REPORT</h2>
+              <p>Arrhythmia Diagnostic Classification &bull; MIT-BIH Protocol</p>
+            </div>
+            <div class="report-meta">
+              <div><strong>Date:</strong> <span id="reportDate">2026-09-18</span></div>
+              <div><strong>Record ID:</strong> <span id="reportRecordId">MITBIH-TEST-#0</span></div>
+              <div><strong>Lead:</strong> MLII (125 Hz)</div>
+            </div>
+          </div>
+
+          <div class="report-triage-block" id="reportTriageBlock">
+            <div class="report-finding-title">DIAGNOSTIC FINDING:</div>
+            <div class="report-finding-name" id="reportFindingName">Normal Sinus Rhythm</div>
+            <div class="report-finding-meta">
+              <span id="reportTriageSeverity">LOW RISK</span> &bull; 
+              Model Confidence: <span id="reportConfVal">99.98%</span> &bull; 
+              Cardiologist Ground Truth: <span id="reportTruthVal">Normal (N)</span>
+            </div>
+          </div>
+
+          <div class="report-chart-section">
+            <div class="report-section-label">187-POINT ECG LEAD TRACE &amp; P-Q-R-S-T WAVE MORPHOLOGY</div>
+            <div class="report-canvas-container">
+              <canvas id="reportCanvas" width="800" height="220"></canvas>
+            </div>
+          </div>
+
+          <div class="report-probabilities-table">
+            <div class="report-section-label">MULTI-CLASS PROBABILITY DISTRIBUTION</div>
+            <div class="report-prob-grid" id="reportProbGrid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="report-footer-section">
+            <div class="report-notes">
+              <strong>Clinical Impression:</strong>
+              <p id="reportImpressionText">Waveform exhibits standard ventricular depolarization and repolarization morphology. No ischemic or acute ectopic activity detected on lead MLII.</p>
+            </div>
+            <div class="report-signature-block">
+              <div class="sig-line"></div>
+              <div>Attending Cardiologist / AI Reviewer</div>
+              <div style="font-size: 0.7rem; color: #777;">CardioPulse Intelligence System v2.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <p>CardioPulse AI &copy; 2026 &bull; Powered by TensorFlow 1D-CNN &bull; MIT-BIH Arrhythmia Database &bull; Researched &amp; Trained Locally</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
