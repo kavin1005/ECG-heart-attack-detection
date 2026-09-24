@@ -1,0 +1,18 @@
+CNN – MIT-BIH Test Set Evaluation
+
+Accuracy : 0.9846
+Precision: 0.9842
+Recall   : 0.9846
+F1 Score : 0.9843
+
+                  precision    recall  f1-score   support
+
+          Normal       0.99      0.99      0.99     18118
+Supraventricular       0.87      0.76      0.81       556
+     Ventricular       0.97      0.96      0.96      1448
+          Fusion       0.83      0.81      0.82       162
+  Unclassifiable       0.99      0.99      0.99      1608
+
+        accuracy                           0.98     21892
+       macro avg       0.93      0.90      0.92     21892
+    weighted avg       0.98      0.98      0.98     21892

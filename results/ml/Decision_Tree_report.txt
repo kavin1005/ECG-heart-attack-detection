@@ -1,0 +1,13 @@
+Model: Decision Tree
+
+                  precision    recall  f1-score   support
+
+          Normal       0.98      0.93      0.96     18118
+Supraventricular       0.45      0.75      0.56       556
+     Ventricular       0.81      0.90      0.85      1448
+          Fusion       0.30      0.78      0.43       162
+  Unclassifiable       0.89      0.95      0.92      1608
+
+        accuracy                           0.93     21892
+       macro avg       0.69      0.86      0.74     21892
+    weighted avg       0.95      0.93      0.93     21892

@@ -1,0 +1,22 @@
+# Preprocessed datasets (files > 100 MB exceed GitHub limits)
+preprocessed/
+
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

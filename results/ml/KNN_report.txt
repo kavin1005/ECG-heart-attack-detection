@@ -1,0 +1,13 @@
+Model: KNN
+
+                  precision    recall  f1-score   support
+
+          Normal       0.99      0.96      0.98     18118
+Supraventricular       0.51      0.82      0.63       556
+     Ventricular       0.87      0.94      0.91      1448
+          Fusion       0.48      0.84      0.61       162
+  Unclassifiable       0.96      0.98      0.97      1608
+
+        accuracy                           0.96     21892
+       macro avg       0.76      0.91      0.82     21892
+    weighted avg       0.97      0.96      0.96     21892

@@ -1,0 +1,15 @@
+1D CNN – PTBDB Binary Classification
+
+Accuracy : 0.9914
+Precision: 0.9911
+Recall   : 0.9972
+F1 Score : 0.9941
+
+              precision    recall  f1-score   support
+
+      Normal       0.99      0.98      0.98       780
+    Abnormal       0.99      1.00      0.99      2129
+
+    accuracy                           0.99      2909
+   macro avg       0.99      0.99      0.99      2909
+weighted avg       0.99      0.99      0.99      2909

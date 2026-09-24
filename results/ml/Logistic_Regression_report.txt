@@ -1,0 +1,13 @@
+Model: Logistic Regression
+
+                  precision    recall  f1-score   support
+
+          Normal       0.97      0.65      0.78     18118
+Supraventricular       0.15      0.67      0.24       556
+     Ventricular       0.29      0.72      0.41      1448
+          Fusion       0.08      0.86      0.15       162
+  Unclassifiable       0.72      0.92      0.81      1608
+
+        accuracy                           0.67     21892
+       macro avg       0.44      0.76      0.48     21892
+    weighted avg       0.88      0.67      0.74     21892

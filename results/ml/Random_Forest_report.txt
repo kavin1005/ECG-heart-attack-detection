@@ -1,0 +1,13 @@
+Model: Random Forest
+
+                  precision    recall  f1-score   support
+
+          Normal       0.99      0.99      0.99     18118
+Supraventricular       0.87      0.78      0.82       556
+     Ventricular       0.96      0.94      0.95      1448
+          Fusion       0.81      0.75      0.78       162
+  Unclassifiable       0.99      0.97      0.98      1608
+
+        accuracy                           0.98     21892
+       macro avg       0.92      0.88      0.90     21892
+    weighted avg       0.98      0.98      0.98     21892

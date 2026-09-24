@@ -1,0 +1,13 @@
+Model: XGBoost
+
+                  precision    recall  f1-score   support
+
+          Normal       0.99      0.97      0.98     18118
+Supraventricular       0.61      0.79      0.69       556
+     Ventricular       0.93      0.94      0.93      1448
+          Fusion       0.59      0.85      0.69       162
+  Unclassifiable       0.98      0.98      0.98      1608
+
+        accuracy                           0.97     21892
+       macro avg       0.82      0.90      0.85     21892
+    weighted avg       0.97      0.97      0.97     21892
