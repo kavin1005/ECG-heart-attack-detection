@@ -1,19 +1,21 @@
 # ECG Heart Attack & Arrhythmia Detection
 
-Deep Learning and Machine Learning pipeline for automated ECG heartbeat classification and myocardial infarction / abnormal heartbeat detection using the **MIT-BIH Arrhythmia Database** and **PTB Diagnostic ECG Database**.
+Automated ECG heartbeat classification and myocardial infarction detection using Deep Learning (1D CNN) and Machine Learning, with an interactive web dashboard.
 
 ---
 
-## 📁 Dataset Setup
+## 🚀 Quick Start
 
-Due to GitHub's file size limits (>100 MB), raw and preprocessed dataset files are not tracked in this repository.
+### 1. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-### 1. Download the Dataset
-Download the **ECG Heartbeat Categorization Dataset** from Kaggle:
-👉 **[Kaggle: ECG Heartbeat Categorization Dataset](https://www.kaggle.com/datasets/shayanfazeli/heartbeat)**
+### 2. Dataset Setup
+Download the dataset from Kaggle:
+👉 **[Kaggle ECG Heartbeat Dataset](https://www.kaggle.com/datasets/shayanfazeli/heartbeat)**
 
-### 2. Extract into `dataset/`
-Place the CSV files into a folder named `dataset/` in the project root:
+Extract the CSV files into a `dataset/` folder:
 ```text
 dataset/
 ├── mitbih_train.csv
@@ -22,62 +24,53 @@ dataset/
 └── ptbdb_abnormal.csv
 ```
 
----
-
-## 🚀 Quickstart
-
-### 1. Install Dependencies
+### 3. Preprocess & Train
 ```bash
-pip install -r requirements.txt
-```
-
-### 2. Preprocess Data
-Runs data cleaning, normalization, SMOTE balancing, and saves `.npy` / `.csv` arrays to `preprocessed/`:
-```bash
+# Clean and prepare data
 python preprocess.py
+
+# Train 1D CNN model
+python train_cnn.py
+
+# Train baseline ML models (Random Forest, XGBoost, etc.)
+python baseline_models.py
 ```
 
-### 3. Exploratory Data Analysis (EDA)
-Generate signal plots and class distributions:
-```bash
-python eda.py
-```
-
-### 4. Train Models
-- **Baseline ML Models** (Logistic Regression, Random Forest, XGBoost, KNN, Decision Tree):
-  ```bash
-  python baseline_models.py
-  ```
-- **1D Convolutional Neural Network (CNN)** for MIT-BIH:
-  ```bash
-  python train_cnn.py
-  ```
-- **Advanced CNN with Residual Connections / Attention**:
-  ```bash
-  python train_advanced_cnn.py
-  ```
-- **PTB Diagnostic (Myocardial Infarction / Abnormal)**:
-  ```bash
-  python train_ptbdb.py
-  ```
-
-### 5. Evaluate and Compare Models
-```bash
-python evaluate_cnn.py
-python compare_models.py
-```
-
-### 6. Interactive Dashboard & Inference
-Run the dashboard server to visualize ECG signals and classify heartbeats interactively:
+### 4. Run Interactive Dashboard
 ```bash
 python dashboard_server.py
 ```
+Open **`http://localhost:5000`** in your browser to visualize ECG signals and test predictions in real-time.
 
 ---
 
-## 📊 Results & Artifacts
+## 📊 Results Summary
 
-All evaluation metrics, confusion matrices, and training curves are saved in [`results/`](results):
-- **MIT-BIH Classification**: 5 classes (Normal, Supraventricular ectopic, Ventricular ectopic, Fusion, Unknown)
-- **PTBDB Classification**: Binary (Normal vs. Abnormal / Myocardial Infarction)
-- Visualizations available in `results/cnn/`, `results/eda/`, and `results/ml/`.
+| Model | Dataset | Task | Accuracy | F1-Score |
+|:---|:---|:---|:---:|:---:|
+| **1D CNN** | **PTB Diagnostic** | Heart Attack / Abnormal Detection | **99.14%** | **99.41%** |
+| **1D CNN** | **MIT-BIH** | 5-Class Arrhythmia Classification | **98.46%** | **98.43%** |
+| **Random Forest** | **MIT-BIH** | 5-Class Arrhythmia Classification | **98.08%** | **98.04%** |
+| **XGBoost** | **MIT-BIH** | 5-Class Arrhythmia Classification | **96.69%** | **96.85%** |
+
+---
+
+## 📁 Project Structure
+
+```text
+├── dashboard/            # Web interface files (HTML, CSS, JS)
+├── models/               # Saved trained models (.keras, .joblib)
+├── results/              # Evaluation plots and metric reports
+├── dataset/              # Raw ECG CSV data (git-ignored)
+├── preprocessed/         # Processed data arrays (git-ignored)
+├── preprocess.py         # Data cleaning & normalization
+├── train_cnn.py          # CNN training script
+├── baseline_models.py    # Classical ML models training
+├── dashboard_server.py   # Web dashboard backend server
+└── requirements.txt      # Python dependencies
+```
+
+---
+
+## 📜 License
+MIT License
