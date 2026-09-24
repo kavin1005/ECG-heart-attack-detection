@@ -1,4 +1,5 @@
-# Preprocessed datasets (files > 100 MB exceed GitHub limits)
+# Datasets (files > 100 MB exceed GitHub limits)
+dataset/
 preprocessed/
 
 # Python caches and virtual environments
